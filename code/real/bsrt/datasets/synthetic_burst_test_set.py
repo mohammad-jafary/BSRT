@@ -2,6 +2,7 @@ import torch
 import cv2
 import numpy as np
 import pickle as pkl
+import os
 
 
 class SyntheticBurstTest(torch.utils.data.Dataset):
@@ -17,7 +18,10 @@ class SyntheticBurstTest(torch.utils.data.Dataset):
         return len(self.burst_list)
 
     def _read_burst_image(self, index, image_id):
-        im = cv2.imread('{}/{:04d}/im_raw_{:02d}.png'.format(self.root, index, image_id), cv2.IMREAD_UNCHANGED)
+        im = cv2.imread(
+            os.path.join(self.root, f'{index:04d}', f'im_raw_{image_id:02d}.png'),
+            cv2.IMREAD_UNCHANGED,
+        )
         im_t = torch.from_numpy(im.astype(np.float32)).permute(2, 0, 1).float() / (2**14)
         return im_t
 

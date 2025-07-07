@@ -1,4 +1,5 @@
 import argparse
+import os
 
 parser = argparse.ArgumentParser(description='EDSR and MDSR')
 
@@ -52,8 +53,12 @@ parser.add_argument('--use_checkpoint', action='store_true',
                     help='use use_checkpoint in swin transformer')
 
 # Data specifications
-parser.add_argument('--root', type=str, default='/data/dataset/ntire21/burstsr/synthetic',
-                    help='dataset directory')
+parser.add_argument(
+    '--root',
+    type=str,
+    default=os.path.join('datasets', 'burstsr', 'synthetic'),
+    help='dataset directory'
+)
 parser.add_argument('--mode', type=str, default='train',
                     help='demo image directory')
 parser.add_argument('--scale', type=str, default='4',

@@ -2,8 +2,10 @@ import torch.nn.functional as F
 from datasets.burstsr_dataset import BurstSRDataset
 from utils.metrics import AlignedPSNR
 from pwcnet.pwcnet import PWCNet
+import argparse
+import os
 
-root = '/data/dataset/ntire21/burstsr/real/NTIRE/burstsr_dataset'
+DEFAULT_ROOT = os.path.join('datasets', 'burstsr', 'real', 'NTIRE', 'burstsr_dataset')
 
 class SimpleBaseline:
     def __init__(self):
@@ -16,10 +18,15 @@ class SimpleBaseline:
         return burst_rgb
 
 
-def main():
+def main(dataset_root):
     # Load dataset
-    dataset = BurstSRDataset(root=root,
-                             split='val', burst_size=14, crop_sz=80, random_flip=False)
+    dataset = BurstSRDataset(
+        root=dataset_root,
+        split='val',
+        burst_size=14,
+        crop_sz=80,
+        random_flip=False,
+    )
 
     # TODO Set your network here
     net = SimpleBaseline()
@@ -51,4 +58,13 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description='Evaluate BurstSR validation set')
+    parser.add_argument(
+        '--root',
+        type=str,
+        default=DEFAULT_ROOT,
+        help='path to BurstSR validation dataset',
+    )
+    args = parser.parse_args()
+
+    main(args.root)

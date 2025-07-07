@@ -387,7 +387,9 @@ class EBSR(nn.Module):
         self.num_features = embed_dim
         self.mlp_ratio = mlp_ratio
 
-        spynet_path='/home/luoziwei/.pretrained_models/spynet_sintel_final-3d2a1287.pth'
+        spynet_path = os.path.expanduser(
+            os.path.join('~', '.pretrained_models', 'spynet_sintel_final-3d2a1287.pth')
+        )
         self.spynet = SpyNet(spynet_path, [3, 4, 5])
         self.conv_flow = nn.Conv2d(1, 3, kernel_size=3, stride=1, padding=1)
 

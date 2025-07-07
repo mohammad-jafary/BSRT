@@ -21,7 +21,7 @@ class BurstSRDataset(torch.utils.data.Dataset):
         assert crop_sz <= 80, 'crop_sz must be less than or equal to 80'
         assert split in ['test']
 
-        root = root + '/' + split
+        root = os.path.join(root, split)
         super().__init__()
 
         self.burst_size = burst_size
@@ -38,7 +38,7 @@ class BurstSRDataset(torch.utils.data.Dataset):
         self.burst_list = self._get_burst_list()
 
     def _get_burst_list(self):
-        burst_list = sorted(os.listdir('{}'.format(self.root)))
+        burst_list = sorted(os.listdir(self.root))
 
         return burst_list
 
@@ -47,7 +47,9 @@ class BurstSRDataset(torch.utils.data.Dataset):
         return burst_info
 
     def _get_raw_image(self, burst_id, im_id):
-        raw_image = SamsungRAWImage.load('{}/{}/samsung_{:02d}'.format(self.root, self.burst_list[burst_id], im_id))
+        raw_image = SamsungRAWImage.load(
+            os.path.join(self.root, self.burst_list[burst_id], f'samsung_{im_id:02d}')
+        )
         return raw_image
 
     def get_burst(self, burst_id, im_ids, info=None):

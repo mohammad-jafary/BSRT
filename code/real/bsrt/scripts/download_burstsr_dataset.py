@@ -6,54 +6,61 @@ import argparse
 
 
 def download_burstsr_dataset(download_path):
-    out_dir = download_path + '/burstsr_dataset'
+    out_dir = os.path.join(download_path, 'burstsr_dataset')
 
     # Download train folders
     for i in range(9):
-        if not os.path.isfile('{}/train_{:02d}.zip'.format(out_dir, i)):
+        if not os.path.isfile(os.path.join(out_dir, f'train_{i:02d}.zip')):
             print('Downloading train_{:02d}'.format(i))
 
-            urllib.request.urlretrieve('https://data.vision.ee.ethz.ch/bhatg/BurstSRChallenge/train_{:02d}.zip'.format(i),
-                                       '{}/tmp.zip'.format(out_dir))
+            urllib.request.urlretrieve(
+                f'https://data.vision.ee.ethz.ch/bhatg/BurstSRChallenge/train_{i:02d}.zip',
+                os.path.join(out_dir, 'tmp.zip'),
+            )
 
-            os.rename('{}/tmp.zip'.format(out_dir), '{}/train_{:02d}.zip'.format(out_dir, i))
+            os.rename(
+                os.path.join(out_dir, 'tmp.zip'),
+                os.path.join(out_dir, f'train_{i:02d}.zip'),
+            )
 
     # Download val folder
-    if not os.path.isfile('{}/val.zip'.format(out_dir)):
+    if not os.path.isfile(os.path.join(out_dir, 'val.zip')):
         print('Downloading val')
 
-        urllib.request.urlretrieve('https://data.vision.ee.ethz.ch/bhatg/BurstSRChallenge/val.zip',
-                                   '{}/tmp.zip'.format(out_dir))
+        urllib.request.urlretrieve(
+            'https://data.vision.ee.ethz.ch/bhatg/BurstSRChallenge/val.zip',
+            os.path.join(out_dir, 'tmp.zip'),
+        )
 
-        os.rename('{}/tmp.zip'.format(out_dir), '{}/val.zip'.format(out_dir))
+        os.rename(os.path.join(out_dir, 'tmp.zip'), os.path.join(out_dir, 'val.zip'))
 
     # Unpack train set
     for i in range(9):
         print('Unpacking train_{:02d}'.format(i))
-        with zipfile.ZipFile('{}/train_{:02d}.zip'.format(out_dir, i), 'r') as zip_ref:
-            zip_ref.extractall('{}'.format(out_dir))
+        with zipfile.ZipFile(os.path.join(out_dir, f'train_{i:02d}.zip'), 'r') as zip_ref:
+            zip_ref.extractall(out_dir)
 
     # Move files to a common directory
-    os.makedirs('{}/train'.format(out_dir), exist_ok=True)
+    os.makedirs(os.path.join(out_dir, 'train'), exist_ok=True)
 
     for i in range(9):
-        file_list = os.listdir('{}/train_{:02d}'.format(out_dir, i))
+        file_list = os.listdir(os.path.join(out_dir, f'train_{i:02d}'))
 
         for b in file_list:
-            source_dir = '{}/train_{:02d}/{}'.format(out_dir, i, b)
-            dst_dir = '{}/train/{}'.format(out_dir, b)
+            source_dir = os.path.join(out_dir, f'train_{i:02d}', b)
+            dst_dir = os.path.join(out_dir, 'train', b)
 
             if os.path.isdir(source_dir):
                 shutil.move(source_dir, dst_dir)
 
     # Delete individual subsets
     for i in range(9):
-        shutil.rmtree('{}/train_{:02d}'.format(out_dir, i))
+        shutil.rmtree(os.path.join(out_dir, f'train_{i:02d}'))
 
     # Unpack val set
     print('Unpacking val')
-    with zipfile.ZipFile('{}/val.zip'.format(out_dir), 'r') as zip_ref:
-        zip_ref.extractall('{}'.format(out_dir))
+    with zipfile.ZipFile(os.path.join(out_dir, 'val.zip'), 'r') as zip_ref:
+        zip_ref.extractall(out_dir)
 
 
 def main():
